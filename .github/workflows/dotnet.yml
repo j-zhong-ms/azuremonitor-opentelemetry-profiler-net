@@ -26,3 +26,20 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    - name: 'Add NuGet source'
+      run: |
+        dotnet nuget add source "https://nuget.pkg.github.com/j-zhong-ms/index.json" \
+          -n "github" \
+          -u "j-zhong-ms" \
+          -p ${{ secrets.GITHUB_TOKEN }} \
+          --store-password-in-clear-text
+
+    - name: "Pack"
+      run: pwsh ./src/ServiceProfiler.EventPipe.Otel/tools/PackSolution.ps1
+
+    - name: "Publish"
+      run: dotnet nuget push "./Out/NuGets/Azure.Monitor.OpenTelemetry.Profiler.AspNetCore.1.0.0.*.nupkg" \
+        -s "github" \
+        -k ${{ secrets.GITHUB_TOKEN }} \
+        --skip-duplicate
