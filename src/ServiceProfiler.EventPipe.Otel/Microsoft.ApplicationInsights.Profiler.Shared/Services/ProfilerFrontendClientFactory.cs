@@ -8,7 +8,6 @@ using Microsoft.ApplicationInsights.Profiler.Shared.Services.Abstractions;
 using Microsoft.ApplicationInsights.Profiler.Shared.Services.Abstractions.Auth;
 using Microsoft.ApplicationInsights.Profiler.Shared.Services.Auth;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.ServiceProfiler.Agent.FrontendClient;
 using Microsoft.ServiceProfiler.Utilities;
@@ -24,16 +23,13 @@ internal class ProfilerFrontendClientFactory
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IServiceProfilerContext _serviceProfilerContext;
-    private readonly ILogger _logger;
     private readonly UserConfigurationBase _userConfiguration;
 
     public ProfilerFrontendClientFactory(
         IServiceProvider serviceProvider,
         IServiceProfilerContext serviceProfilerContext,
-        IOptions<UserConfigurationBase> userConfiguration,
-        ILogger<ProfilerFrontendClientFactory> logger)
+        IOptions<UserConfigurationBase> userConfiguration)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _serviceProfilerContext = serviceProfilerContext ?? throw new ArgumentNullException(nameof(serviceProfilerContext));
         _userConfiguration = userConfiguration?.Value ?? throw new ArgumentNullException(nameof(userConfiguration));
