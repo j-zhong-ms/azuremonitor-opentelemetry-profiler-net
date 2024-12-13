@@ -47,6 +47,8 @@ Create a `nuget.config` in your project root with the following content, replaci
 </configuration>
 ```
 
+For additional details on using the GitHub Packages registry, please refer to the [documentation](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package).
+
 ### Step 4: Add NuGet Package Reference
 
 Add a reference to the latest NuGet packages:
@@ -100,12 +102,7 @@ info: Azure.Monitor.OpenTelemetry.Profiler.AspNetCore.ServiceProfilerAgentBootst
       Starting application insights profiler with connection string: InstrumentationKey=5d…
 info: Azure.Monitor.OpenTelemetry.Profiler.Core.DumbTraceControl[0]
       Start writing trace file C:\Users\aaa\AppData\Local\Temp\SPTraces\...
-info: Azure.Monitor.OpenTelemetry.Profiler.Core.EventListeners.TraceSessionListener[0]
-      Activity detected.
-info: Azure.Monitor.OpenTelemetry.Profiler.Core.DumbTraceControl[0]
-      Finished writing trace file C:\Users\aaa\AppData\Local\Temp\SPTraces\b73520a6-931f-4207-b602-0d72d376609a.nettrace.
-info: Microsoft.ApplicationInsights.Profiler.Uploader.TraceUploaderByNamedPipe[0]
-      Service Profiler trace uploaded.
+...
 ```
 
 ### Step 8: View Profiler Data
