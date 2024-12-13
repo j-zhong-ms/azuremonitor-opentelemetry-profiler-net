@@ -46,13 +46,12 @@ internal class ProfilerFrontendClientFactory
         TokenCredential? credential = authTokenProvider.IsAADAuthenticateEnabled ?
             ActivatorUtilities.CreateInstance<AADAuthTokenCredential>(_serviceProvider) :
             null;
-        
-        _logger.LogDebug("Is Credential null? {result}.", credential is null);
-        // TokenCredential? credential = ActivatorUtilities.CreateInstance<AADAuthTokenCredential>(_serviceProvider);
 
-        return ActivatorUtilities.CreateInstance<ProfilerFrontendClient>(
-            _serviceProvider,
-            _serviceProfilerContext.StampFrontendEndpointUrl,
+        // ActivatorUtilities is not used for creating ProfilerFrontendClient due to its limitation in handling nuk=llable parameters.
+        // For example, when credential is null, it will throw InvalidOperationException:
+        // A suitable constructor for type 'Microsoft.ServiceProfiler.Agent.FrontendClient.ProfilerFrontendClient' could not be located.
+        // Because CreateProfilerFrontendClient method is only called in ServiceCollectionExtensions, it will be disposed by the service provider.
+        return new ProfilerFrontendClient(_serviceProfilerContext.StampFrontendEndpointUrl,
             _serviceProfilerContext.AppInsightsInstrumentationKey,
             _serviceProfilerContext.MachineName,
             "1.0.0",
