@@ -53,7 +53,6 @@ internal class ProfilerFrontendClientFactory
             "1.0.0",
             FormattableString.Invariant($"ServiceProfilerEventPipeAgent/{EnvironmentUtilities.ExecutingAssemblyInformationalVersion}"),
             credential,
-            _userConfiguration.SkipEndpointCertificateValidation,
-            false);
+            _userConfiguration.SkipEndpointCertificateValidation);
     }
 }
