@@ -29,7 +29,7 @@ dotnet new web
 
 Follow the steps below to restore Nuget packages using GitHub Packages as the source registry. If you prefer not to use GitHub Packages or a Personal Access Token (PAT), here are the alternatives:
 
-1. [Restore Nuget Packages from Private Feed](./docs/UseBagetter.md) -- use a temporary private Nuget feed to restore the packages needed
+1. [Restore NuGet Packages from Private Feed](./docs/UseBagetter.md) -- use a temporary private NuGet feed to restore the packages needed
 1. [Use Profiler Assemblies Directly](./docs/UseAssembly.md) -- update the project to reference the assembly files instead of Nuget packages
 
 #### a. Generate a Personal Access Token (PAT)
