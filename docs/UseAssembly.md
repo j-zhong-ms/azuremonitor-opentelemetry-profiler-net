@@ -6,7 +6,7 @@ If you prefer not to use the GitHub package, you can configure your project to r
 
 ## Prepare the Files
 
-1. Download `Lib.zip` and `TraceUpload.zip` files from the `/ZipFiles` directory.
+1. Download the `Lib.zip` and `TraceUpload.zip` files from the [releases](https://github.com/Azure/azuremonitor-opentelemetry-profiler-net/releases).
 1. Unzip only the `Lib.zip` file. Copy the folder to the project directory where the `.csproj` file is located.
 1. Create a folder named `ServiceProfiler` in the project directory and place the `TraceUpload.zip` file inside this folder.
 
