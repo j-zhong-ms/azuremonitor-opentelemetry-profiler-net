@@ -1,8 +1,8 @@
-# Restore Nuget Packages from Private Feed
+# Restore NuGet Packages from Private Feed
 
 ## Overview
 
-You can restore the Nuget packages from a temporary private feed by following the steps below.
+You can restore the NuGet packages from a temporary private feed by following the steps below.
 
 ### 1. Add NuGet Source
 
