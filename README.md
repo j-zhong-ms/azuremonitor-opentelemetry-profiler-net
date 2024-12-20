@@ -12,15 +12,18 @@ Welcome to the home page of `Azure Monitor OpenTelemetry Profiler for .NET (PREV
 - **Supported Environments**:
 
   - Windows
+  - Linux
   - Containerized apps in Windows or Linux
   - Azure App Service
-  - Azure Kubernetes Service (AKS)
+- **Application Insights Resource**: Follow [this guide](https://learn.microsoft.com/azure/azure-monitor/app/create-workspace-resource#create-a-workspace-based-resource) to create a new Application Insights resource.
 
 ### Step 1: Create a .NET Application
 
 If you don't have an app already, you can create a new web API project using the following command:
 
-    dotnet new web
+```sh
+dotnet new web
+```
 
 ### Step 2: Generate a PAT
 
