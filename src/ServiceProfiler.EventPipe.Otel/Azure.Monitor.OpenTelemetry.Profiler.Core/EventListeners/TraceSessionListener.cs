@@ -6,6 +6,7 @@ using Microsoft.ApplicationInsights.Profiler.Shared.Services.Abstractions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics.Tracing;
+using System.Text.Json;
 
 namespace Azure.Monitor.OpenTelemetry.Profiler.Core.EventListeners;
 
@@ -18,7 +19,8 @@ internal class TraceSessionListener : EventListener
         public const int RequestStop = 25;
     }
 
-    public const string OpenTelemetrySDKEventSourceName = "OpenTelemetry-Sdk";
+    public const string OpenTelemetrySDKEventSourceName = "Microsoft-Diagnostics-DiagnosticSource"; //"OpenTelemetry-Sdk"
+    public const string DiagnosticSourceEventSourceName = "OpenTelemetry-Sdk";
     private readonly ISerializationProvider _serializer;
     private readonly SampleCollector _sampleCollector;
     private readonly ILogger<TraceSessionListener> _logger;
@@ -58,7 +60,7 @@ internal class TraceSessionListener : EventListener
 
     protected override void OnEventWritten(EventWrittenEventArgs eventData)
     {
-        _logger.LogTrace("OnEventWritten by {eventSource}", eventData.EventSource.Name);
+        //_logger.LogInformation("OnEventWritten by {eventSource}", eventData.EventSource.Name);
 
         try
         {
@@ -83,7 +85,7 @@ internal class TraceSessionListener : EventListener
     /// <param name="eventData"></param>
     public void OnRichPayloadEventWritten(EventWrittenEventArgs eventData)
     {
-        _logger.LogTrace("[{Source}] {Action} - ActivityId: {activityId}, EventName: {eventName}, Keywords: {keyWords}, OpCode: {opCode}",
+        _logger.LogInformation("[{Source}] {Action} - ActivityId: {activityId}, EventName: {eventName}, Keywords: {keyWords}, OpCode: {opCode}",
             eventData.EventSource.Name,
             nameof(OnRichPayloadEventWritten),
             eventData.ActivityId,
@@ -103,21 +105,33 @@ internal class TraceSessionListener : EventListener
             return;
         }
 
-        if (string.Equals(eventData.EventSource.Name, OpenTelemetrySDKEventSourceName, StringComparison.Ordinal) &&
-            (eventData.EventId == EventId.RequestStart || eventData.EventId == EventId.RequestStop))
+        if (string.Equals(eventData.EventSource.Name, "Microsoft-Diagnostics-DiagnosticSource", StringComparison.Ordinal)) //&&
+           // (eventData.EventId == EventId.RequestStart || eventData.EventId == EventId.RequestStop))
         {
-            string requestName = eventData.GetPayload<string>("name") ?? "Unknown";
-            string id = eventData.GetPayload<string>("id") ?? throw new InvalidDataException("id payload is missing.");
+            //string requestName = eventData.GetPayload<string>("name") ?? "Unknown";
+            string requestName = eventData.GetPayload<string>("EventName") ?? "Unknown";
+
+            string id = eventData.GetPayload<string>("Id") ?? throw new InvalidDataException("id payload is missing.");
+            //if (eventData.PayloadNames.Contains("Arguments"))
+            //{
+            //    //string argsJson = eventData.GetPayload<string>("Arguments");
+            //}
+            //else
+            //{
+
+            //}
 
             (string operationId, string requestId) = ExtractKeyIds(id);
 
-            if (eventData.EventId == 24) // Started
+            //if (eventData.EventId == 24) // Started
+            if (requestName.EndsWith("HttpRequestIn.Start"))
             {
                 HandleRequestStart(eventData, requestName, requestId, operationId, id);
                 return;
             }
 
-            if (eventData.EventId == 25) // Stopped
+            //if (eventData.EventId == 25) // Stopped
+            if (requestName.EndsWith("Stop"))
             {
                 HandleRequestStop(eventData, requestName, requestId, operationId, id);
                 return;
@@ -133,13 +147,17 @@ internal class TraceSessionListener : EventListener
         try
         {
             _logger.LogDebug("Got manual trigger for source: {name}", eventSource.Name);
-
+            var dict = new Dictionary<string, string>
+            {
+                ["FilterAndPayloadSpecs"] = "[AS]*"
+            };
             await Task.Yield();
             if (string.Equals(eventSource.Name, OpenTelemetrySDKEventSourceName, StringComparison.OrdinalIgnoreCase))
             {
-                EventKeywords keywordsMask = (EventKeywords)0x0000F;
+                //EventKeywords keywordsMask = (EventKeywords)0x0000F;
                 _logger.LogDebug("Enabling EventSource: {eventSourceName}", eventSource.Name);
-                EnableEvents(eventSource, EventLevel.Verbose, keywordsMask);
+                //EnableEvents(eventSource, EventLevel.Verbose, keywordsMask);
+                EnableEvents(eventSource, EventLevel.Verbose, (EventKeywords)0xffffffffffff, dict);
             }
             else if (eventSource.Name == "System.Threading.Tasks.TplEventSource")
             {
@@ -158,7 +176,8 @@ internal class TraceSessionListener : EventListener
     {
         // We only are interested capturing Http In requests.
         // Http request out, for example, from HttpClient will be excluded.
-        return string.Equals("Microsoft.AspNetCore.Hosting.HttpRequestIn", requestName, StringComparison.Ordinal);
+        //return string.Equals("Microsoft.AspNetCore.Hosting.HttpRequestIn", requestName, StringComparison.Ordinal);
+        return requestName.StartsWith("Microsoft.AspNetCore.Hosting.HttpRequestIn");
     }
 
     private void HandleRequestStart(EventWrittenEventArgs eventData, string requestName, string requestId, string operationId, string id)
